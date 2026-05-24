@@ -22,18 +22,18 @@ today_tuple = (today.month, today.day)
 data = pandas.read_csv("birthdays.csv")
 birthdays_dict = {(row["month"], row["day"]): row for (index, row) in data.iterrows()}
 if today_tuple in birthdays_dict:
-    birthday_person_id = birthdays_dict[today_tuple]
+    birthday_person = birthdays_dict[today_tuple]
     random_letter = random.randint(1, 3)
     file_path = f"letter_templates/letter_{random_letter}.txt"
     with open(file_path) as letter_file:
         contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person_id["name"])
+        contents = contents.replace("[NAME]", birthday_person["name"])
 
     with smtplib.SMTP("smtp.gmail.com") as connection:
         connection.starttls()
         connection.login(MY_EMAIL, MY_PASSWORD)
         connection.sendmail(
             from_addr=MY_EMAIL,
-            to_addrs=birthday_person_id["email"],
+            to_addrs=birthday_person["email"],
             msg=f"Subject:Happy Birthday!\n\n{contents}"
         )
