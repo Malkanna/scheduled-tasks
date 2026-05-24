@@ -14,25 +14,26 @@ import os
 
 # import os and use it to get the Github repository secrets
 MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
+MY_PWD = os.environ.get("MY_PASSWORD")
 
 today = datetime.now()
 today_tuple = (today.month, today.day)
 
 data = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"])                  : data_row for (index, data_row) in data.iterrows()}
+birthdays_dict = {(row["month"], row["day"]): row for (index, row) in data.iterrows()}
 if today_tuple in birthdays_dict:
-    birthday_person = birthdays_dict[today_tuple]
-    file_path = f"letter_templates/letter_{random.randint(1, 3)}.txt"
+    birthday_person_id = birthdays_dict[today_tuple]
+    random_letter = random.randint(1, 3)
+    file_path = f"letter_templates/letter_{random_letter}.txt"
     with open(file_path) as letter_file:
-        contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person["name"])
+        content = letter_file.read()
+        new_content = contents.replace("[NAME]", birthday_person_id["name"])
 
     with smtplib.SMTP("YOUR EMAIL PROVIDER SMTP SERVER ADDRESS") as connection:
         connection.starttls()
-        connection.login(MY_EMAIL, MY_PASSWORD)
+        connection.login(MY_EMAIL, MY_PWD)
         connection.sendmail(
             from_addr=MY_EMAIL,
-            to_addrs=birthday_person["email"],
-            msg=f"Subject:Happy Birthday!\n\n{contents}"
+            to_addrs=birthday_person_id["email"],
+            msg=f"Subject:Happy Birthday!\n\n{new_content}"
         )
