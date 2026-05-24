@@ -28,8 +28,8 @@ if today_tuple in birthdays_dict:
         contents = letter_file.read()
         contents = contents.replace("[NAME]", birthday_person["name"])
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as connection:
-        # connection.starttls()
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
         connection.login(MY_EMAIL, MY_PASSWORD)
         connection.sendmail(
             from_addr=MY_EMAIL,
